@@ -22,33 +22,43 @@ Build a production-quality **Predictive Maintenance System** that predicts the R
 3.  **Modern Tech Stack**:
     *   **Backend**: Flask (Python) for fast, lightweight API serving.
     *   **Frontend**: Native HTML/JS with **Chart.js** for high-performance rendering.
-    *   **Design**: "Deep Black" Mission Control aesthetic with glass-morphism.
+    *   **Design**: "Deep Black" Mission Control aesthetic.
 
 ## 📂 Project Structure
 
 ```
-hackathon_project/
+aeroguard/
+│
+├── config.py                      # Central configuration
+├── run.py                         # Application entry point
+│
+├── services/                      # Business logic layer
+│   ├── __init__.py
+│   ├── prediction_service.py     # Prediction management
+│   └── analytics_service.py      # Analytics & statistics
+│
+├── utils/                         # Core utilities
+│   ├── __init__.py
+│   ├── data_loader.py            # Data preprocessing
+│   ├── health_score.py           # Health calculations
+│   └── model.py                  # Model definitions
+│
+├── templates/                     # Frontend
+│   └── index.html                # Dashboard UI
 │
 ├── data/                          # NASA CMAPSS Dataset
 │   ├── train_FD001.txt
 │   └── test_FD001.txt
 │
-├── models/                        # Trained Models
-│   ├── balanced_xgboost_model.pkl # optimized model
-│   └── balanced_scaler.pkl        # dedicated scaler
+├── models/                        # Trained models
+│   ├── balanced_xgboost_model.pkl
+│   └── balanced_scaler.pkl
 │
-├── templates/                     # Frontend Assets
-│   └── index.html                 # Single-page Dashboard Application
+├── scripts/                       # Training scripts
+│   ├── train_balanced.py
+│   └── train_advanced.py
 │
-├── utils/                         # Core Logic Modules
-│   ├── data_loader.py             # Raw data parsing
-│   ├── health_score.py            # Diagnostic algos
-│   └── model.py                   # Model definition
-│
-├── train_balanced.py              # Advanced training script
-├── web_app.py                     # Flask Server Entry Point
-├── requirements.txt               # Dependencies
-└── README.md                      # Documentation
+└── requirements.txt               # Dependencies
 ```
 
 ## 🚀 Quick Start
@@ -63,22 +73,20 @@ pip install -r requirements.txt
 
 Ensure the NASA CMAPSS data files (`train_FD001.txt`, `test_FD001.txt`) are present in the `data/` directory.
 
-### 3. Launch "AeroGuard" Dashboard
+### 3. Launch AeroGuard Dashboard
 
-Start the Flask server:
+Start the application:
 
 ```bash
-python web_app.py
+python run.py
 ```
 
-Open your browser to the local address (usually `http://127.0.0.1:5000`).
+Open your browser to `http://127.0.0.1:5000`
 
 ### 4. (Optional) Retrain Model
 
-If you want to regenerate the model with new parameters:
-
 ```bash
-python train_balanced.py
+python scripts/train_balanced.py
 ```
 
 ## 🖥️ Dashboard Features
@@ -108,10 +116,22 @@ We found that standard models overfit to "healthy" engines because engines spend
 | **Validation R²** | **0.93** | The model explains 93% of the engine degradation variance. |
 | **Inference Time** | **<15ms** | Real-time prediction suitable for high-frequency updates. |
 
+## 🏗️ Architecture
+
+### Service Layer Pattern
+
+The application follows a clean service-oriented architecture:
+
+- **Presentation Layer**: Flask routes (`run.py`)
+- **Service Layer**: Business logic (`services/`)
+- **Data Layer**: Utilities and data access (`utils/`)
+
+This separation ensures:
+- ✅ Better testability
+- ✅ Easier maintenance
+- ✅ Clear responsibility boundaries
+- ✅ Scalability for future features
+
 ## 👥 Authors
 
-Built with ❤️ for **IIT Kharagpur Kshitij 2026**.
-
-## 📄 License
-
-MIT License. Open for innovation.
+Built with ❤️ by **Team TriBits** for **IIT Kharagpur Kshitij 2026**.
