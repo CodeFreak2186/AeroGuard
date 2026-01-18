@@ -1,0 +1,45 @@
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+.env
+
+# Project specific
+data/
+# Keep gitkeep in data if you want to track the folder but not content, otherwise just ignore data content
+!data/.gitkeep
+
+# Models (optional, usually ignored if large)
+# models/
+# But for this hackathon, we might want to keep the trained models if they are small enough (<100MB)
+# models/*.pkl
+
+# IDEs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db

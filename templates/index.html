@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AeroGuard | Advanced Jet Propulsion Monitoring</title>
+
+    <!-- Dependencies -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.js"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Rajdhani:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <style>
+        :root {
+            /* DEEP BLACK THEME */
+            --bg-dark: #000000;
+            --bg-panel: #0a0a0a;
+            --bg-card: #111111;
+
+            /* PREMIUM ACCENTS */
+            --primary: #ffffff;
+            /* Stark White for premium feel */
+            --accent: #2563eb;
+            /* Electric Blue for subtle interaction */
+
+            /* FUNCTIONAL COLORS (Subtle) */
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+
+            /* TYPOGRAPHY COLORS */
+            --text-main: #ffffff;
+            --text-secondary: #a1a1aa;
+            --text-muted: #52525b;
+
+            /* BORDERS & EFFECTS */
+            --border: #27272a;
+            --border-hover: #3f3f46;
+            --glass: rgba(255, 255, 255, 0.02);
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 0%, #111111 0%, #000000 70%);
+        }
+
+        /* Typography */
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        .brand-font {
+            font-family: 'Inter', sans-serif;
+            /* Cleaner than Rajdhani for modern premium */
+            letter-spacing: -0.02em;
+            font-weight: 600;
+        }
+
+        /* Layout */
+        .wrapper {
+            display: flex;
+            height: 100vh;
+            width: 100%;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 280px;
+            background: var(--bg-panel);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 1000;
+            padding: 1.5rem;
+        }
+
+        .brand-section {
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .brand-logo {
+            width: 40px;
+            height: 40px;
+            background: var(--text-main);
+            color: var(--bg-dark);
+            border-radius: 8px;
+            /* Sharper */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.2rem;
+        }
+
+        .brand-text h4 {
+            margin: 0;
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-main);
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 0.8rem 1rem;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 6px;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-card);
+            color: var(--text-main);
+        }
+
+        .nav-link.active {
+            background: var(--text-main);
+            color: var(--bg-dark);
+            font-weight: 600;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 3rem;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Cards - Premium Flat Style */
+        .glass-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            /* Subtle roundness */
+            padding: 1.5rem;
+            height: 100%;
+            transition: border-color 0.2s ease, transform 0.2s ease;
+        }
+
+        .glass-card:hover {
+            border-color: var(--border-hover);
+        }
+
+        /* Engine List Grid */
+        .engine-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 1.5rem;
+        }
+
+        .engine-card {
+            cursor: pointer;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+        }
+
+        .engine-card:hover {
+            border-color: var(--text-main);
+            /* Highlight on hover */
+            transform: translateY(-2px);
+        }
+
+        /* Badges */
+        .engine-status-badge {
+            display: inline-block;
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .status-healthy {
+            background: #064e3b;
+            color: #34d399;
+        }
+
+        /* Deep Green bg */
+        .status-warning {
+            background: #451a03;
+            color: #fbbf24;
+        }
+
+        /* Deep Amber bg */
+        .status-critical {
+            background: #450a0a;
+            color: #f87171;
+        }
+
+        /* Deep Red bg */
+
+        /* Inputs */
+        input.form-control {
+            background: var(--bg-card) !important;
+            border: 1px solid var(--border) !important;
+            color: var(--text-main) !important;
+            border-radius: 8px;
+            padding: 0.75rem 1rem;
+        }
+
+        input.form-control:focus {
+            border-color: var(--text-main) !important;
+            box-shadow: none !important;
+        }
+
+        /* Detail View Slide-over */
+        #engineDetailsView {
+            position: fixed;
+            top: 0;
+            right: -100%;
+            width: 100%;
+            max-width: 900px;
+            /* Slightly narrower for focus */
+            height: 100vh;
+            background: #050505;
+            border-left: 1px solid var(--border);
+            z-index: 2000;
+            transition: right 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            /* Premium easing */
+            display: flex;
+            flex-direction: column;
+            box-shadow: -50px 0 100px rgba(0, 0, 0, 0.8);
+        }
+
+        #engineDetailsView.active {
+            right: 0;
+        }
+
+        .detail-header {
+            padding: 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--bg-panel);
+        }
+
+        /* Sensor Grid */
+        .sensor-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .sensor-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .sensor-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .sensor-value {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: var(--text-main);
+            letter-spacing: -0.02em;
+        }
+
+        /* MISSING LOADER STYLES RESTORED */
+        .loader-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 300px;
+            width: 100%;
+        }
+
+        .loader {
+            width: 48px;
+            height: 48px;
+            border: 4px solid var(--border);
+            border-bottom-color: var(--text-main);
+            border-radius: 50%;
+            animation: rotation 1s linear infinite;
+        }
+
+        @keyframes rotation {
+            0% {
+                transform: rotate(0deg);
+            }
+
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="wrapper">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="brand-section">
+                <div class="brand-logo">
+                    <i class="fas fa-jet-fighter"></i>
+                </div>
+                <div class="brand-text">
+                    <h4>AEROGUARD</h4>
+                    <small style="color: var(--text-muted); font-size: 0.7rem;">SYSTEMS ONLINE</small>
+                </div>
+            </div>
+
+            <div class="nav-menu">
+                <div class="nav-item">
+                    <a href="#" class="nav-link active" onclick="switchTab('dashboard')">
+                        <i class="fas fa-chart-pie"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="switchTab('engines')">
+                        <i class="fas fa-server"></i>
+                        <span>Engine Fleet</span>
+                    </a>
+                </div>
+                <div class="nav-item">
+                    <a href="#" class="nav-link" onclick="switchTab('analytics')">
+                        <i class="fas fa-wave-square"></i>
+                        <span>Analytics</span>
+                    </a>
+                </div>
+            </div>
+
+            <div style="padding: 2rem; margin-top: auto;">
+                <div class="glass-card" style="padding: 1rem; text-align: center; border-color: var(--primary);">
+                    <i class="fas fa-satellite-dish fa-spin" style="color: var(--primary); margin-bottom: 0.5rem;"></i>
+                    <div style="font-size: 0.8rem; color: var(--primary);">LIVE CONNECTION</div>
+                    <div id="connectionStatus" style="font-size: 0.7rem; color: var(--text-muted);">Latency: 12ms</div>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Dashboard View -->
+            <div id="dashboard-view" class="view-section fade-in">
+                <div class="section-header">
+                    <div>
+                        <h1 class="page-title">Mission Control</h1>
+                        <div class="page-subtitle">Real-time fleet health monitoring system</div>
+                    </div>
+                    <div>
+                        <button class="btn btn-outline-light btn-sm" onclick="loadDashboardData()">
+                            <i class="fas fa-sync-alt"></i> Refresh
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Stats Row -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-3">
+                        <div class="glass-card stat-card">
+                            <div class="stat-icon" style="color: var(--primary);">
+                                <i class="fas fa-plane"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="stat-total">-</h3>
+                                <div class="stat-label">Total Engines</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card stat-card">
+                            <div class="stat-icon" style="color: var(--success);">
+                                <i class="fas fa-check-shield"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="stat-healthy">-</h3>
+                                <div class="stat-label">Optimal</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card stat-card">
+                            <div class="stat-icon" style="color: var(--warning);">
+                                <i class="fas fa-exclamation-triangle"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="stat-warning">-</h3>
+                                <div class="stat-label">Attention</div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="glass-card stat-card">
+                            <div class="stat-icon" style="color: var(--danger);">
+                                <i class="fas fa-radiation"></i>
+                            </div>
+                            <div class="stat-content">
+                                <h3 id="stat-critical">-</h3>
+                                <div class="stat-label">Critical</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="row g-4">
+                    <div class="col-md-8">
+                        <div class="glass-card">
+                            <h4 class="mb-4">RUL Projection Analysis</h4>
+                            <div style="position: relative; height: 300px; width: 100%;">
+                                <canvas id="mainRulChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="glass-card">
+                            <h4 class="mb-4">Fleet Health Status</h4>
+                            <div style="position: relative; height: 300px; width: 100%;">
+                                <canvas id="mainHealthChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Engines View -->
+            <div id="engines-view" class="view-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h1 class="page-title">Engine Fleet</h1>
+                        <div class="page-subtitle">Detailed status of all propulsion units</div>
+                    </div>
+                    <div class="d-flex gap-3">
+                        <input type="text" id="engineSearch" class="form-control bg-dark text-light border-secondary"
+                            placeholder="Search Unit ID..." onkeyup="filterEngines()">
+                    </div>
+                </div>
+
+                <div id="engine-grid-container" class="engine-grid">
+                    <!-- Engines loaded here -->
+                    <div class="loader-container">
+                        <div class="loader"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Analytics View -->
+            <div id="analytics-view" class="view-section d-none">
+                <div class="section-header">
+                    <div>
+                        <h1 class="page-title">Deep Analytics</h1>
+                        <div class="page-subtitle">AI Model Performance & Fleet Trends</div>
+                    </div>
+                </div>
+
+                <!-- Row 1: AI Performance & Features -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-6">
+                        <div class="glass-card">
+                            <h4 class="mb-3"><i class="fas fa-microchip me-2 text-primary"></i>Model Performance
+                                Comparison</h4>
+                            <div class="d-flex justify-content-between mb-2">
+                                <small class="text-muted">Baseline vs. Advanced XGBoost</small>
+                                <span
+                                    class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">R²
+                                    Improved +17%</span>
+                            </div>
+                            <div style="position: relative; height: 250px; width: 100%;">
+                                <canvas id="modelCompChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card">
+                            <h4 class="mb-3"><i class="fas fa-list-ol me-2 text-warning"></i>Key Risk Indicators
+                                (Feature Importance)</h4>
+                            <small class="text-muted d-block mb-3">Top sensors driving failure predictions</small>
+                            <div style="position: relative; height: 250px; width: 100%;">
+                                <canvas id="sensorVarChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 2: Fleet Trends -->
+                <div class="row g-4 mb-4">
+                    <div class="col-md-12">
+                        <div class="glass-card">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="mb-0"><i class="fas fa-chart-line me-2 text-info"></i>Fleet Degradation
+                                    Trends</h4>
+                                <div class="btn-group btn-group-sm">
+                                    <button class="btn btn-outline-secondary active"
+                                        onclick="toggleTrend('rul')">RUL</button>
+                                    <button class="btn btn-outline-secondary" onclick="toggleTrend('health')">Health
+                                        %</button>
+                                </div>
+                            </div>
+                            <div style="position: relative; height: 300px; width: 100%;">
+                                <canvas id="fleetTrendChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Row 3: Distributions -->
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="glass-card">
+                            <h4 class="mb-3">RUL Distribution</h4>
+                            <div style="position: relative; height: 200px; width: 100%;">
+                                <canvas id="rulDistChartAnalytics"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="glass-card">
+                            <h4 class="mb-3">Health Score Distribution</h4>
+                            <div style="position: relative; height: 200px; width: 100%;">
+                                <canvas id="healthDistChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- Engine Details Slide-over Panel -->
+    <div id="engineDetailsView">
+        <div class="detail-header">
+            <div class="d-flex align-items-center gap-3">
+                <div class="brand-logo" style="background: var(--glass); width: 50px; height: 50px; font-size: 1.2rem;">
+                    <i class="fas fa-cogs"></i>
+                </div>
+                <div>
+                    <h2 class="m-0" id="detail-unit-id">UNIT #000</h2>
+                    <div class="text-muted" id="detail-cycle">Cycle: 0</div>
+                </div>
+            </div>
+            <button class="close-btn" onclick="closeEngineDetails()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+
+        <div class="detail-content" id="detail-content-body">
+            <!-- Content Injected via JS -->
+            <div class="loader-container">
+                <div class="loader"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        let currentEngines = [];
+        let chartInstances = {};
+        let detailChart = null;
+        let fleetTrendData = null;
+        let analyticsDataCache = null;
+
+        // Navigation
+        function switchTab(tabId) {
+            // Update UI
+            document.querySelectorAll('.nav-link').forEach(el => el.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+
+            // Hide all views
+            document.querySelectorAll('.view-section').forEach(el => el.classList.add('d-none'));
+            document.getElementById(tabId + '-view').classList.remove('d-none');
+
+            // Trigger data load
+            if (tabId === 'engines') loadEnginesList();
+            if (tabId === 'analytics') {
+                // If we have data, render immediately, otherwise load
+                if (analyticsDataCache) {
+                    renderAnalyticsCharts(analyticsDataCache);
+                } else {
+                    loadAnalyticsData();
+                }
+            }
+        }
+
+        // Dashboard Data
+        async function loadDashboardData() {
+            try {
+                const res = await fetch('/api/overview');
+                const data = await res.json();
+
+                document.getElementById('stat-total').innerText = data.total_engines;
+                document.getElementById('stat-healthy').innerText = data.healthy;
+                document.getElementById('stat-warning').innerText = data.warning;
+                document.getElementById('stat-critical').innerText = data.critical;
+
+                // Load Charts Data
+                loadAnalyticsData();
+            } catch (e) {
+                console.error("Dashboard Load Error", e);
+            }
+        }
+
+        // Engine List
+        async function loadEnginesList() {
+            const container = document.getElementById('engine-grid-container');
+            container.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
+
+            try {
+                const res = await fetch('/api/engines');
+                currentEngines = await res.json();
+                renderEngines(currentEngines);
+            } catch (e) {
+                container.innerHTML = `<div class="text-center text-danger w-100 p-5">Failed to load fleet data. <br> ${e.message}</div>`;
+            }
+        }
+
+        function renderEngines(engines) {
+            const container = document.getElementById('engine-grid-container');
+            if (engines.length === 0) {
+                container.innerHTML = '<div class="text-center w-100 p-5 text-muted">No engines found matching criteria.</div>';
+                return;
+            }
+
+            container.innerHTML = engines.map(engine => {
+                const statusLower = engine.status.toLowerCase();
+                let statusClass = 'status-healthy';
+                let cardClass = 'healthy';
+
+                if (statusLower.includes('warning')) { statusClass = 'status-warning'; cardClass = 'warning'; }
+                if (statusLower.includes('critical')) { statusClass = 'status-critical'; cardClass = 'critical'; }
+
+                return `
+                <div class="glass-card engine-card ${cardClass} p-3" onclick="openEngineDetails(${engine.unit_id})">
+                    <!-- Header with ID and Status Badge (No Overlap) -->
+                    <div class="d-flex justify-content-between align-items-start mb-3">
+                        <div>
+                            <div class="text-uppercase fw-bold" style="font-size: 0.7rem; color: #94a3b8; letter-spacing: 1px;">Propulsion Unit</div>
+                            <h3 class="mb-0 brand-font text-white">#${engine.unit_id}</h3>
+                        </div>
+                        <span class="engine-status-badge ${statusClass}">${engine.status}</span>
+                    </div>
+
+                    <!-- Health & RUL Section -->
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between align-items-end mb-1">
+                            <span style="font-size: 0.7rem; color: #94a3b8;">HEALTH SCORE</span>
+                            <span class="h5 mb-0 ${cardClass == 'critical' ? 'text-danger' : 'text-success'} fw-bold">
+                                ${engine.health_percentage.toFixed(1)}%
+                            </span>
+                        </div>
+                        <div class="progress" style="height: 6px; background: rgba(255,255,255,0.08);">
+                            <div class="progress-bar ${cardClass === 'critical' ? 'bg-danger' : (cardClass === 'warning' ? 'bg-warning' : 'bg-success')}" 
+                                role="progressbar" style="width: ${engine.health_percentage}%"></div>
+                        </div>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="d-flex justify-content-between align-items-center pt-2 border-top" style="border-color: rgba(255,255,255,0.1) !important;">
+                        <span class="text-white small"><i class="fas fa-stopwatch me-1 text-muted"></i> RUL: ${Math.round(engine.predicted_rul)}</span>
+                        <span class="text-primary small fw-bold">Details <i class="fas fa-chevron-right ms-1"></i></span>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function filterEngines() {
+            const term = document.getElementById('engineSearch').value.toLowerCase();
+            const filtered = currentEngines.filter(e =>
+                e.unit_id.toString().includes(term) ||
+                e.status.toLowerCase().includes(term)
+            );
+            renderEngines(filtered);
+        }
+
+        // Engine Details
+        async function openEngineDetails(id) {
+            const panel = document.getElementById('engineDetailsView');
+            const body = document.getElementById('detail-content-body');
+            const title = document.getElementById('detail-unit-id');
+            const cycle = document.getElementById('detail-cycle');
+
+            panel.classList.add('active');
+            title.innerText = `UNIT #${id}`;
+            cycle.innerText = 'Loading...';
+            body.innerHTML = '<div class="loader-container"><div class="loader"></div></div>';
+
+            try {
+                const res = await fetch(`/api/engine/${id}`);
+                if (!res.ok) throw new Error('API Error');
+                const data = await res.json();
+
+                cycle.innerText = `Current Cycle: ${data.current_cycle}`;
+
+                // Status Color Logic
+                let statusColor = '#00ff9d';
+                if (data.status.toLowerCase().includes('warning')) statusColor = '#ffbe0b';
+                if (data.status.toLowerCase().includes('critical')) statusColor = '#ff0054';
+
+                // Build UI
+                body.innerHTML = `
+                   <div class="row g-4 mb-4">
+                        <div class="col-md-3">
+                             <div class="glass-card p-3 h-100 d-flex flex-column justify-content-center text-center">
+                                <div class="text-uppercase fw-bold small mb-2 text-nowrap" style="color: #94a3b8; font-size: 0.7rem;"><i class="fas fa-fingerprint me-2"></i>Engine ID</div>
+                                <div class="h3 fw-bold mb-0 text-white">${data.unit_id}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                             <div class="glass-card p-3 h-100 d-flex flex-column justify-content-center text-center">
+                                <div class="text-uppercase fw-bold small mb-2 text-nowrap" style="color: #94a3b8; font-size: 0.7rem;"><i class="fas fa-history me-2"></i>Age (Cycles)</div>
+                                <div class="h3 fw-bold mb-0 text-white">${data.current_cycle}</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                             <div class="glass-card p-3 h-100 d-flex flex-column justify-content-center text-center">
+                                <div class="text-uppercase fw-bold small mb-2 text-nowrap" style="color: #94a3b8; font-size: 0.7rem;"><i class="fas fa-hourglass-half me-2"></i>Predicted RUL</div>
+                                <div class="h3 fw-bold mb-0 text-white text-nowrap">${data.predicted_rul.toFixed(1)} <span class="fs-6 opacity-50">cyc</span></div>
+                                <div class="small mt-1 text-nowrap" style="color: #94a3b8; font-size: 0.7rem;">±${data.rmse} RMSE</div>
+                            </div>
+                        </div>
+                        <div class="col-md-3">
+                             <div class="glass-card p-3 h-100 d-flex flex-column justify-content-center text-center" style="border: 1px solid ${statusColor}; background: ${statusColor}08">
+                                <div class="text-uppercase fw-bold small mb-2 text-nowrap" style="color: ${statusColor}; font-size: 0.7rem;"><i class="fas fa-heartbeat me-2"></i>Health</div>
+                                <div class="h3 fw-bold mb-0" style="color: ${statusColor}">${data.health_percentage.toFixed(1)}%</div>
+                                <div class="small mt-1 text-uppercase fw-bold text-nowrap" style="color: ${statusColor}; font-size: 0.7rem;">${data.status}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card mb-4" style="border-left: 4px solid ${statusColor};">
+                        <div class="p-3 d-flex align-items-center gap-3">
+                             <div style="font-size: 1.5rem;">${data.status === 'Healthy' ? '✅' : (data.status === 'Warning' ? '⚠️' : '🚨')}</div>
+                             <div>
+                                <div class="fw-bold text-uppercase" style="font-size: 0.75rem; color: ${statusColor}; opacity: 0.9;">Recommendation</div>
+                                <div class="text-white" style="font-size: 0.9rem;">${data.recommendation}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card mb-4 p-4">
+                        <h5 class="mb-3"><i class="fas fa-chart-area me-2 text-primary"></i>Health Degredation Trajectory</h5>
+                        <div style="height: 300px; position: relative; width: 100%;">
+                            <canvas id="detailHistoryChart"></canvas>
+                        </div>
+                    </div>
+
+                    <h5 class="mb-3">Real-time Telemetry Frame</h5>
+                    <div class="sensor-grid">
+                        ${Object.entries(data.sensors).map(([key, val]) => `
+                            <div class="sensor-card">
+                                <div class="sensor-label">${key.replace('sensor_', 'SENSOR ').toUpperCase()}</div>
+                                <div class="sensor-value">${val.toFixed(2)}</div>
+                                <div class="progress mt-2" style="height: 3px; background: rgba(255,255,255,0.05);">
+                                    <div class="progress-bar" style="width: ${(val / 1000) * 100}%; background: var(--text-main);"></div>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+
+                // Render Chart
+                if (detailChart) {
+                    detailChart.destroy();
+                    detailChart = null;
+                }
+
+                const ctx = document.getElementById('detailHistoryChart').getContext('2d');
+                detailChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.cycles,
+                        datasets: [{
+                            label: 'Health %',
+                            data: data.health_history,
+                            borderColor: statusColor,
+                            backgroundColor: statusColor.includes('#') ? statusColor + '20' : statusColor,
+                            fill: true,
+                            tension: 0.4,
+                            pointRadius: 0,
+                            pointHoverRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: '#111',
+                                titleColor: '#fff',
+                                bodyColor: '#ccc',
+                                borderColor: '#333',
+                                borderWidth: 1
+                            }
+                        },
+                        scales: {
+                            y: {
+                                grid: { color: 'rgba(255,255,255,0.03)' },
+                                ticks: { color: '#52525b', font: { family: 'Inter' } }
+                            },
+                            x: { display: false }
+                        }
+                    }
+                });
+
+            } catch (e) {
+                console.error(e);
+                body.innerHTML = `<div class="alert alert-danger">Error loading engine details: ${e.message}</div>`;
+            }
+        }
+
+        function closeEngineDetails() {
+            document.getElementById('engineDetailsView').classList.remove('active');
+        }
+
+        // Toggle Trend Chart
+        function toggleTrend(type) {
+            const buttons = document.querySelectorAll('.btn-group button');
+            buttons.forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+
+            if (!fleetTrendData) return;
+
+            const ctx = document.getElementById('fleetTrendChart');
+            if (!ctx) return;
+
+            // Destroy existing
+            if (chartInstances.fleetTrend) chartInstances.fleetTrend.destroy();
+
+            const isRul = type === 'rul';
+            const data = isRul ? fleetTrendData.avg_rul : fleetTrendData.avg_health;
+            const color = isRul ? '#4cc9f0' : '#4361ee'; // Cyan vs Blue/Purple
+            const label = isRul ? 'Avg RUL (Cycles)' : 'Avg Health (%)';
+
+            chartInstances.fleetTrend = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: fleetTrendData.cycles,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        borderColor: color,
+                        backgroundColor: color + '20', // Transparent fill
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: { mode: 'index', intersect: false },
+                    plugins: {
+                        legend: { display: true, labels: { color: '#94a3b8' } },
+                        tooltip: { mode: 'index', intersect: false }
+                    },
+                    scales: {
+                        y: {
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8' },
+                            title: { display: true, text: label, color: '#64748b' }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#94a3b8', maxTicksLimit: 10 },
+                            title: { display: true, text: 'Cycle Number', color: '#64748b' }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Analytics Config
+        async function loadAnalyticsData() {
+            try {
+                const res = await fetch('/api/analytics');
+                const data = await res.json();
+
+                // Store global
+                fleetTrendData = data.fleet_trend;
+                analyticsDataCache = data;
+
+                // Render visible dashboard charts
+                renderDashboardCharts(data);
+
+                // If on analytics tab, render those
+                if (!document.getElementById('analytics-view').classList.contains('d-none')) {
+                    renderAnalyticsCharts(data);
+                }
+
+            } catch (e) {
+                console.error("Analytics Load Error", e);
+            }
+        }
+
+        function renderDashboardCharts(data) {
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            };
+
+            // Note: We do NOT destroy charts that are not in the current view to avoid "Canvas is already in use" errors if strict
+            // But Chart.js 4 handles re-use better if we destroy the instance.
+
+            const mainRulCtx = document.getElementById('mainRulChart');
+            if (mainRulCtx && !chartInstances.mainRul) {
+                chartInstances.mainRul = new Chart(mainRulCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(data.rul_distribution),
+                        datasets: [{
+                            label: 'Engines',
+                            data: Object.values(data.rul_distribution),
+                            backgroundColor: '#4361ee',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: { ...commonOptions, plugins: { legend: { display: false } } }
+                });
+            }
+
+            const mainHealthCtx = document.getElementById('mainHealthChart');
+            if (mainHealthCtx && !chartInstances.mainHealth) {
+                chartInstances.mainHealth = new Chart(mainHealthCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: Object.keys(data.health_distribution),
+                        datasets: [{
+                            data: Object.values(data.health_distribution),
+                            backgroundColor: ['#ff0054', '#ffbe0b', '#00ff9d'],
+                            borderWidth: 0
+                        }]
+                    },
+                    options: { ...commonOptions, cutout: '75%' }
+                });
+            }
+        }
+
+        function renderAnalyticsCharts(data) {
+            const commonOptions = {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { position: 'bottom', labels: { color: '#94a3b8' } } },
+                scales: {
+                    y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } }
+                }
+            };
+
+            // Model Comparison
+            const modelCtx = document.getElementById('modelCompChart');
+            if (modelCtx) {
+                if (chartInstances.modelComp) chartInstances.modelComp.destroy();
+                chartInstances.modelComp = new Chart(modelCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: data.model_comparison.metrics,
+                        datasets: [
+                            {
+                                label: 'Baseline',
+                                data: data.model_comparison.baseline,
+                                backgroundColor: '#94a3b8',
+                                borderRadius: 4
+                            },
+                            {
+                                label: 'Advanced',
+                                data: data.model_comparison.advanced,
+                                backgroundColor: '#4cc9f0',
+                                borderRadius: 4
+                            }
+                        ]
+                    },
+                    options: {
+                        ...commonOptions,
+                        indexAxis: 'y',
+                        scales: {
+                            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#94a3b8' } },
+                            y: { grid: { display: false }, ticks: { color: 'white', font: { weight: 'bold' } } }
+                        }
+                    }
+                });
+            }
+
+            // Sensor Var
+            const sensorCtx = document.getElementById('sensorVarChart');
+            if (sensorCtx) {
+                if (chartInstances.sensor) chartInstances.sensor.destroy();
+                chartInstances.sensor = new Chart(sensorCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(data.sensor_importance),
+                        datasets: [{
+                            label: 'Impact',
+                            data: Object.values(data.sensor_importance),
+                            backgroundColor: (ctx) => {
+                                const val = ctx.raw;
+                                return val > 0.05 ? '#ff0054' : '#ffbe0b';
+                            },
+                            borderRadius: 4
+                        }]
+                    },
+                    options: {
+                        ...commonOptions,
+                        indexAxis: 'y',
+                        plugins: { legend: { display: false } }
+                    }
+                });
+            }
+
+            // Fleet Trend
+            toggleTrend('rul');
+
+            // Distributions
+            const healthDistCtx = document.getElementById('healthDistChart');
+            if (healthDistCtx) {
+                if (chartInstances.healthDist) chartInstances.healthDist.destroy();
+                chartInstances.healthDist = new Chart(healthDistCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(data.health_percentage_distribution),
+                        datasets: [{
+                            label: 'Engines',
+                            data: Object.values(data.health_percentage_distribution),
+                            backgroundColor: '#7209b7',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: commonOptions
+                });
+            }
+
+            const rulDistCtx = document.getElementById('rulDistChartAnalytics');
+            if (rulDistCtx) {
+                if (chartInstances.rulDistAnalytics) chartInstances.rulDistAnalytics.destroy();
+                chartInstances.rulDistAnalytics = new Chart(rulDistCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: Object.keys(data.rul_distribution),
+                        datasets: [{
+                            label: 'Engines',
+                            data: Object.values(data.rul_distribution),
+                            backgroundColor: '#3f37c9',
+                            borderRadius: 4
+                        }]
+                    },
+                    options: commonOptions
+                });
+            }
+        }
+
+        // Init
+        window.addEventListener('load', () => {
+            loadDashboardData();
+        });
+
+    </script>
+</body>
+
+</html>
